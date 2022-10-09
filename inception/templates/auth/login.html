@@ -1,0 +1,115 @@
+{% extends "admin/base.html" %}
+
+{% block custom_head %}
+    <!-- themify-icons line icon -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='icon/themify-icons/themify-icons.css')}}">
+    <!-- ico font -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='icon/icofont/css/icofont.css')}}">
+{% endblock custom_head %}
+
+{% block body %}
+    <section class="login-block">
+        <!-- Container-fluid starts -->
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <!-- Authentication card start -->
+                    
+                        <form action="{{url_for('auth.login')}}" method="post" class="md-float-material form-material">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <div class="text-center">
+                                <img src="{{url_for('static', filename='img/logo.png')}}" alt="logo.png">
+                            </div>
+                            <div class="auth-box card">
+                                <div class="card-block">
+                                    <div class="row m-b-20">
+                                        <div class="col-md-12">
+                                            <h3 class="text-center">Sign In</h3>
+                                        </div>
+                                    </div>
+                                    {% with messages = get_flashed_messages(with_categories=true) %}
+                                    {% if messages %}
+                                    <div id="toast-container" class="toast-top-right">
+                                        {% for category, message in messages %}
+                                            {% if category == 'success' %}
+                                            <div class="alert alert-success icons-alert">
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <i class="icofont icofont-close-line-circled"></i>
+                                                </button>
+                                                <p><strong>Success!</strong></p>
+                                                <p>{{ message }}</p>
+                                            </div>
+                                            {% elif category == 'error' %}
+                                            <div class="alert alert-danger icons-alert">
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <i class="icofont icofont-close-line-circled"></i>
+                                                </button>
+                                                <p><strong>Login Failed!</strong></p>
+                                                <p>{{ message }}</p>
+                                            </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    {% endwith %}
+                                    <div class="form-group form-primary">
+                                        <input type="text" name="username" class="form-control" required="" placeholder="Your Username">
+                                        <span class="form-bar"></span>
+                                    </div>
+                                    <div class="form-group form-primary">
+                                        <input type="password" name="password" class="form-control" required="" placeholder="Password">
+                                        <span class="form-bar"></span>
+                                    </div>
+                                    <div class="row m-t-25 text-left">
+                                        <div class="col-12">
+                                            <div class="checkbox-fade fade-in-primary d-">
+                                                <label>
+                                                    <input type="checkbox" value="">
+                                                    <span class="cr"><i class="cr-icon icofont icofont-ui-check txt-primary"></i></span>
+                                                    <span class="text-inverse">Remember me</span>
+                                                </label>
+                                            </div>
+                                            <!-- <div class="forgot-phone text-right f-right"> -->
+                                                <!-- <a href="auth-reset-password.htm" class="text-right f-w-600"> Forgot Password?</a> -->
+                                                <!-- <a href="#" class="text-right f-w-600"> Forgot Password?</a> -->
+                                            <!-- </div> -->
+                                        </div>
+                                    </div>
+                                    <div class="row m-t-30">
+                                        <div class="col-md-12">
+                                            <button type="submit" class="btn btn-primary btn-md btn-block waves-effect waves-light text-center m-b-20">Sign in</button>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <p class="text-inverse text-left m-b-0">Thank you.</p>
+                                            <!-- <p class="text-inverse text-left"><a href="index-1.htm"><b class="f-w-600">Back to website</b></a></p> -->
+                                            <p class="text-inverse text-left"><a href="#"><b class="f-w-600">Back to website</b></a></p>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <img src="{{url_for('static', filename='img/auth/Logo-small-bottom.png')}}" alt="small-logo.png">
+                                        </div>
+                                    </div>
+                                    <p class="text-inverse text-left">Don't have an account?<a href="{{url_for('auth.signup')}}"> <b class="f-w-600">Sign up here </b></a></p>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- end of form -->
+                </div>
+                <!-- end of col-sm-12 -->
+            </div>
+            <!-- end of row -->
+        </div>
+        <!-- end of container-fluid -->
+    </section>
+{% endblock body %}
+
+{% block scripts %}
+    <!-- i18next.min.js -->
+    <script type="text/javascript" src="{{url_for('static', filename='bower_components/i18next/js/i18next.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='bower_components/i18next-xhr-backend/js/i18nextXHRBackend.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='bower_components/i18next-browser-languagedetector/js/i18nextBrowserLanguageDetector.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='bower_components/jquery-i18next/js/jquery-i18next.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/common-pages.js')}}"></script>
+{% endblock scripts %}

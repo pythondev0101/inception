@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{{ title }}</title>
+    <!-- HTML5 Shim and Respond.js IE10 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 10]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <![endif]-->
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="#">
+    <meta name="keywords"
+        content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
+    <meta name="author" content="#">
+    <!-- Favicon icon -->
+    <link rel="icon" href="{{url_for('static', filename='img/favicon.ico')}}" type="image/x-icon">
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+    <!-- Required Fremwork -->
+    <link rel="stylesheet" type="text/css"
+        href="{{url_for('static', filename='bower_components/bootstrap/css/bootstrap.min.css')}}">
+    <!-- themify-icons line icon -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='icon/themify-icons/themify-icons.css')}}">
+    <!-- ico font -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='icon/icofont/css/icofont.css')}}">
+    <!-- feather Awesome -->
+    <link rel="stylesheet" type="text/css"
+        href="{{url_for('static', filename='icon/feather/css/feather.css')}}">
+    <!-- Style.css -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" type="text/css"
+        href="{{url_for('static', filename='css/jquery.mCustomScrollbar.css')}}">
+    <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css"
+        href="{{url_for('static', filename='bower_components/sweetalert/css/sweetalert.css')}}">
+    <!-- override styles -->
+    <link rel="stylesheet" type="text/css"
+        href="{{url_for('static', filename='css/override.css')}}">
+    {% block custom_head %} {% endblock custom_head %}
+
+    <style>
+        div.dataTables_wrapper div.dataTables_processing {
+            top: 0;
+         }
+    </style>
+    
+    <script type="text/javascript">
+        CSRF_TOKEN = "{{csrf_token()}}";
+    </script>
+</head>
+<body>
+    <!-- Pre-loader start -->
+    {% include "admin/page_loader.html" %}
+    <!-- Pre-loader end -->
+
+    {% block body %}
+    <div id="pcoded" class="pcoded">
+        <div class="pcoded-overlay-box"></div>
+        <div class="pcoded-container navbar-wrapper">
+            
+            {% include "admin/header.html" %}
+
+            {% include "admin/sidebar_chat.html" %}
+
+            <div class="pcoded-main-container">
+                <div class="pcoded-wrapper">
+                    {% include current_page.config.sidebar_html %}
+
+                    {% block content %}
+                        <div class="pcoded-content">
+                            <div class="pcoded-inner-content">
+                                <!-- Main-body start -->
+                                <div class="main-body">
+                                    <div class="page-wrapper">
+                                        <!-- Page-header start -->
+                                        <div class="page-header">
+                                            <div class="row align-items-end">
+                                                <div class="col-lg-8">
+                                                    <div class="page-header-title">
+                                                        <div class="d-inline">
+                                                            <h4>Sample Page</h4>
+                                                            <span>lorem ipsum dolor sit amet, consectetur adipisicing elit</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    <div class="page-header-breadcrumb">
+                                                        <ul class="breadcrumb-title">
+                                                            <li class="breadcrumb-item">
+                                                                <a href="index-1.htm"> <i class="feather icon-home"></i> </a>
+                                                            </li>
+                                                            <li class="breadcrumb-item"><a href="#!">Widget</a> </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Page-header end -->
+        
+                                        <div class="page-body">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h5>Hello Card</h5>
+                                                            <span>lorem ipsum dolor sit amet, consectetur adipisicing elit</span>
+                                                            <div class="card-header-right">
+                                                                <ul class="list-unstyled card-option">
+                                                                    <li><i class="feather icon-maximize full-card"></i></li>
+                                                                    <li><i class="feather icon-minus minimize-card"></i></li>
+                                                                    <li><i class="feather icon-trash-2 close-card"></i></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card-block">
+                                                            <p>
+                                                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                                                                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                                                                enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                                                                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+                                                                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+                                                                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+                                                                sunt in culpa qui officia deserunt mollit anim id est laborum."
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="styleSelector">
+        
+                                </div>
+                            </div>
+                        </div>
+                    {% endblock content %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock body %}
+    <!-- Warning Section Ends -->
+    <!-- Required Jquery -->
+    <!-- <script data-cfasync="false" src="..\..\..\cdn-cgi\scripts\5c5dd728\cloudflare-static\email-decode.min.js"></script> -->
+    <script type="text/javascript"
+        src="{{url_for('static', filename='bower_components/jquery/js/jquery.min.js')}}"></script>
+    <script type="text/javascript"
+        src="{{url_for('static', filename='bower_components/jquery-ui/js/jquery-ui.min.js')}}"></script>
+    <!-- Jquery validate js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+    <script type="text/javascript"
+        src="{{url_for('static', filename='bower_components/popper.js/js/popper.min.js')}}"></script>
+    <script type="text/javascript"
+        src="{{url_for('static', filename='bower_components/bootstrap/js/bootstrap.min.js')}}"></script>
+    <!-- jquery slimscroll js -->
+    <script type="text/javascript"
+        src="{{url_for('static', filename='bower_components/jquery-slimscroll/js/jquery.slimscroll.js')}}"></script>
+    <!-- modernizr js -->
+    <script type="text/javascript"
+        src="{{url_for('static', filename='bower_components/modernizr/js/modernizr.js')}}"></script>
+    <script type="text/javascript" 
+        src="{{url_for('static', filename='bower_components/modernizr/js/css-scrollbars.js')}}"></script>
+    <!-- i18next.min.js -->
+    <script type="text/javascript" src="{{url_for('static', filename='bower_components/i18next/js/i18next.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='bower_components/i18next-xhr-backend/js/i18nextXHRBackend.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='bower_components/i18next-browser-languagedetector/js/i18nextBrowserLanguageDetector.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='bower_components/jquery-i18next/js/jquery-i18next.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/pcoded.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/vartical-layout.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/jquery.mCustomScrollbar.concat.min.js')}}"></script>
+    <!-- custom js -->
+    <script type="text/javascript" src="{{url_for('static', filename='js/script.js')}}"></script>
+    <!-- sweet alert js -->
+    <script type="text/javascript"
+        src="{{url_for('static', filename='bower_components/sweetalert/js/sweetalert.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/modal.js')}}"></script>
+    <!-- j-pro js -->
+    <script type="text/javascript" src="{{url_for('static', filename='pages/j-pro/js/jquery.ui.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='pages/j-pro/js/jquery.maskedinput.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='pages/j-pro/js/jquery.j-pro.js')}}"></script>
+
+    {% block scripts %} {% endblock scripts %}
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <!-- <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script> -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-23581568-13');
+
+        // Likes jquery validation set defaults
+        //jQuery.validator.setDefaults({
+        //    errorElement: 'span',
+        //    errorPlacement: function (error, element) {
+        //        error.addClass('invalid-feedback');
+        //        element.closest('.form-group').append(error);
+        //    },
+        //    highlight: function (element, errorClass, validClass) {
+        //        $(element).addClass('is-invalid');
+        //    },
+        //    unhighlight: function (element, errorClass, validClass) {
+        //        $(element).removeClass('is-invalid');
+        //    }
+        //});
+
+        $(document).ready(function(){
+            $(".unavailable").click(function(){
+                swal({
+                    title: "This feature is not yet available!",
+                    text: "Feature Unavailable",
+                    type: "info",
+                    closeOnConfirm: true,
+                });
+            });
+
+            $(".demo").click(function(){
+                swal({
+                    title: "This feature is in demo only, and not available yet!",
+                    text: "Feature Unavailable",
+                    type: "info",
+                    closeOnConfirm: true,
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
+
+{% block modals %}
+{% endblock %}
