@@ -2,6 +2,7 @@ from datetime import datetime
 from bson import ObjectId
 import pymongo
 from pymongo.collection import Collection
+from inception import MONGO
 from inception.core.mongo_repository import MongoRepository
 
 
@@ -11,11 +12,14 @@ class MongoObject(object):
     _filter: dict = {}
 
     _id: ObjectId
+    _data = {}
     date_created: datetime = None
     timezone = 'Asia/Manila'
     _code: str
 
     def __init__(self, data=None, **params):
+        self._data = data
+        
         if data:
             self._id = data.get('_id', ObjectId())
             self.date_created = data.get('date_created')
@@ -111,3 +115,42 @@ class MongoObject(object):
             arr.append(cls(data=x))
             
         return arr
+    
+    
+    @classmethod
+    def find_all(cls):
+        try:
+            models = list(cls._collection.find().sort('created_at', pymongo.DESCENDING))
+            data = []
+
+            for model in models:
+                data.append(cls(data=model))
+            return data
+        except AttributeError:
+            raise AttributeError("{model_name} _collection is not implemented".format(model_name=cls().__class__.__name__))
+
+    
+    @classmethod
+    def search(cls, filter):
+        try:
+            models = list(cls._collection.find(filter).sort('created_at', MONGO.DESCENDING))
+            data = []
+
+            for model in models:
+                data.append(cls(data=model))
+            return data
+        except AttributeError:
+            raise AttributeError("{model_name} _collection is not implemented".format(model_name=cls().__class__.__name__))
+
+
+    @classmethod
+    def find_with_range(cls, start, length):
+        try:
+            models = list(cls._collection.find().sort('created_at', pymongo.DESCENDING).skip(start).limit(length))
+            data = []
+
+            for model in models:
+                data.append(cls(data=model))
+            return data
+        except AttributeError:
+            raise AttributeError("{model_name} _collection is not implemented".format(model_name=cls().__class__.__name__))
