@@ -1,0 +1,68 @@
+<div class="page-title-actions">
+    {% if session['permissions'][RENDERED_MODEL.__amname__] is defined %}
+
+        {% if session['permissions'][RENDERED_MODEL.__amname__]['create'] or current_user.is_superuser %}
+
+            {% if TABLE_OPTIONS['create_modal'] %}
+                <button type="button" data-toggle="modal" data-target="#create_modal" title="Create new" data-placement="bottom"
+                        class="btn-shadow mr-3 btn btn-primary">
+                    {% if RENDERED_MODEL.__amname__ == 'user' %}
+                    <i class="fa fa-user-plus"></i>
+                    {% else %}
+                    <i class="fa fa-plus"></i>
+                    {% endif %}
+                </button>
+            
+            {% elif TABLE_OPTIONS['create_button'] and MODAL_DATA['create_url'] is not none %}
+                <a href="{{ url_for(MODAL_DATA['create_url']) }}" type="button" class="btn-shadow mr-3 btn btn-primary">
+                    <i class="fa fa-plus"></i>
+                </a>
+
+            {% else %}
+
+            {% endif %}
+
+        {% endif %}
+    {% endif %}
+
+    <div class="d-inline-block dropdown">
+        <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                class="btn-shadow dropdown-toggle btn btn-info">
+                        <span class="btn-icon-wrapper pr-2 opacity-7">
+                            <i class="fa fa-list-alt fa-w-20"></i>
+                        </span>
+            Actions
+        </button>
+        <div tabindex="-1" role="menu" aria-hidden="true" class="dropdown-menu dropdown-menu-right">
+            <ul class="nav flex-column">
+                {% if session['permissions'][RENDERED_MODEL.__amname__] is defined %}
+                {% if session['permissions'][RENDERED_MODEL.__amname__]['delete'] or current_user.is_superuser %}
+                <li id="nav_action_btns" class="nav-item">
+                    {% block dropdown_buttons %}
+                    <button id="btndelete" type="button" tabindex="0" class="dropdown-item">Delete</button>
+                    {% endblock %}
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a disabled="" href="javascript:void(0);" class="nav-link disabled">
+                        <i class="nav-link-icon lnr-file-empty"></i>
+                        <span>
+                            No actions
+                        </span>
+                    </a>
+                </li>
+                {% endif %}
+                {% else %}
+                <li class="nav-item">
+                    <a disabled="" href="javascript:void(0);" class="nav-link disabled">
+                        <i class="nav-link-icon lnr-file-empty"></i>
+                        <span>
+                            No actions
+                        </span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>

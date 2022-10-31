@@ -10,7 +10,7 @@ from inception.core import inception_render_template
 @bp_auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        return inception_render_template('auth/login.html')
+        return inception_render_template('auth/auth_login.html')
     elif request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -26,7 +26,6 @@ def login():
             return redirect(url_for('auth.login'))
 
         login_user(user, remember=False)
-        print("user.get_data():::" ,user.get_id())
         
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':

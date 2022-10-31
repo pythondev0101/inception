@@ -1,0 +1,112 @@
+<!--THIS HTML FILE IS THE BASE TEMPLATE OF ADMIN TEMPLATES-->
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{{ title }}</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
+    <meta name="description" content="This is an example dashboard created using build-in elements and components.">
+    <meta name="msapplication-tap-highlight" content="no">
+    <!--
+    =========================================================
+    * ArchitectUI HTML Theme Dashboard - v1.0.0
+    =========================================================
+    * Product Page: https://dashboardpack.com
+    * Copyright 2019 DashboardPack (https://dashboardpack.com)
+    * Licensed under MIT (https://github.com/DashboardPack/architectui-html-theme-free/blob/master/LICENSE)
+    =========================================================
+    * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+    -->
+    <link href="{{ url_for('static', filename='css/lib/main.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/homebest.css') }}" rel="stylesheet">
+    <!-- <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}"> -->
+    <link href="{{ url_for('static', filename='DataTables/datatables.css') }}" rel="stylesheet">
+
+    {% block custom_head %}
+    <!-- For extra service declaration -->
+    {% endblock custom_head %}
+
+    <script type="text/javascript">
+        CSRF_TOKEN = "{{csrf_token()}}";
+    </script>
+</head>
+
+<body>
+    <div class="app-container app-theme-white body-tabs-shadow fixed-sidebar fixed-header">
+        <!-- ADMIN HEADER -->
+        {% block header %}
+        {% include 'admin/admin_header.html' %}
+        {% endblock %}
+
+        <!-- ADMIN OPTIONS -->
+        {% block options %}
+        {% include 'admin/admin_options.html' %}
+        {% endblock %}
+
+        <div class="app-main">
+            <!-- ADMIN SIDEBAR -->
+            {% block sidebar %}
+            {% include 'admin/admin_sidebar.html' %}
+            {% endblock %}
+
+            <div class="app-main__outer">
+                <!-- CONTENT BLOCK -->
+                {% block content %}
+                {% endblock content%}
+                <!-- INCLUDE FOOTER HERE -->
+                <div class="app-wrapper-footer">
+                    <div class="app-footer">
+                        <div class="app-footer__inner">
+                            {% block inner_footer %}
+                            {% endblock inner_footer%}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/lib/main.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/homebest.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/lib/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='DataTables/datatables.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+
+    {% block scripts %} {% endblock scripts %}
+
+    {% block toast %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div id="toast-container" class="toast-top-center">
+        {% for category, message in messages %}
+        {% if category == 'success' %}
+        <div class="toast toast-success" aria-live="polite">
+            <div class="toast-progress" style="width: 0%;"></div>
+            <button type="button" class="toast-close-button" role="button" onclick="close_toast()">×</button>
+            <div class="toast-title">Success!</div>
+            <div class="toast-message">{{ message }}</div>
+        </div>
+        {% elif category == 'error' %}
+        <div class="toast toast-error" aria-live="polite">
+            <div class="toast-progress" style="width: 0%;"></div>
+            <button type="button" class="toast-close-button" role="button" onclick="close_toast()">×</button>
+            <div class="toast-title">Error!</div>
+            <div class="toast-message">{{ message }}</div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    {% endblock %}
+</body>
+
+</html>
+
+{% block modals %}
+<!-- Your modals here --> {% endblock modals %}
