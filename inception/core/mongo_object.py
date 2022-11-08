@@ -21,6 +21,7 @@ class MongoObject(object):
         self._data = data
         
         if data:
+            self.__dict__.update(data)
             self._id = data.get('_id', ObjectId())
             self.date_created = data.get('date_created')
             self._code = data.get('_code', None)
@@ -154,3 +155,23 @@ class MongoObject(object):
             return data
         except AttributeError:
             raise AttributeError("{model_name} _collection is not implemented".format(model_name=cls().__class__.__name__))
+
+
+    @classmethod
+    def find_one_by_id(cls, id):
+        try:
+            query = cls._collection.find_one({'_id': ObjectId(id)})
+
+            return cls(data=query)
+        except Exception:
+            return None
+
+
+    def toJson(self):
+        json = self.__dict__
+        
+        for key,val in self.__dict__.items():
+            json[key] = str(val)
+        return json
+    
+    
