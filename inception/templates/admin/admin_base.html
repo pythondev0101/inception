@@ -26,6 +26,8 @@
     <link href="{{ url_for('static', filename='css/homebest.css') }}" rel="stylesheet">
     <!-- <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}"> -->
     <link href="{{ url_for('static', filename='DataTables/datatables.css') }}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/lib/lightbox.css')}}" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 
     {% block custom_head %}
     <!-- For extra service declaration -->
@@ -44,9 +46,6 @@
         {% endblock %}
 
         <!-- ADMIN OPTIONS -->
-        {% block options %}
-        {% include 'admin/admin_options.html' %}
-        {% endblock %}
 
         <div class="app-main">
             <!-- ADMIN SIDEBAR -->
@@ -75,7 +74,9 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/homebest.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/lib/jquery.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='DataTables/datatables.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/lib/lightbox.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/lib/admin_sidebar.js') }}"></script>
     <script>
         $.ajaxSetup({
