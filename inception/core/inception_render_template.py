@@ -3,5 +3,5 @@ from inception.core.config import Page, PageConfig
 
 
 
-def inception_render_template(template, config:PageConfig = PageConfig()):
-    return render_template(template, current_page=Page(page_config=config))
+def inception_render_template(template, config:PageConfig = PageConfig(), **kwargs):
+    return render_template(template, current_page=Page(page_config=config), **kwargs)
