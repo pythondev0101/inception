@@ -53,12 +53,18 @@ class User(UserMixin, MongoObject):
         print(query)
         return cls(data=query)
 
+
     @property
     def code(self):
         self._code = "{}-{}".format(type(self).__name__, self.username) 
         return self._code
+
     
-    
+    @property
+    def full_name(self):
+        return self.fname + " " + self.lname
+
+
 @LOGIN_MANAGER.user_loader
 def load_user(user_id):
     print("user_id:::", user_id)
