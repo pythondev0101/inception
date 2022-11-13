@@ -1,0 +1,81 @@
+{% extends "admin/admin_base.html" %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        var dt_areas = $('#tbl_areas').DataTable({
+            "dom": 'rtip',
+            "pageLength": 25,
+            "processing": true,
+            "serverSide": true,
+            "ordering": false,
+            "responsive": true,
+            "autoWidth": false,
+            "ajax": {
+                "url": "/admin/areas/dt",
+            },
+            "columnDefs": [{
+                "targets": 0,
+                "visible": false,
+            }, {
+                "targets": 5,
+                "width": "1%",
+                "render": function (data, type, row) {
+                    return `
+                    <div role="group" class="btn-group-sm btn-group">
+                        <button disabled class="btn-shadow btn btn-primary">Edit</button>
+                        <button disabled class="btn-shadow btn btn-danger">Delete</button>
+                    </div>
+                    `
+                }
+            }],
+        });
+    }); // document
+</script>
+{% endblock scripts %}
+
+
+{% block content %}
+<div class="app-main__inner">
+    <div class="app-page-title">
+        <div class="page-title-wrapper">
+            <div class="page-title-heading">
+                <div class="page-title-icon">
+                    <i class="pe-7s-rocket icon-gradient bg-happy-itmeo"></i>
+                </div>
+                <div>
+                    Areas
+                    <div class="page-title-subheading">
+                        List of areas
+                    </div>
+                </div>
+            </div>
+                <!-- Actions -->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-card mb-3 card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="tbl_areas" class="align-middle mb-0 table table-bordered table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th class="text-center"></th>
+                                <th class="text-center">NAME</th>
+                                <th class="text-center">DESCRIPTION</th>
+                                <th class="text-center">MUNICIPALITY</th>
+                                <th class="text-center">DATE CREATED</th>
+                                <th class="text-center">ACTIONS</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

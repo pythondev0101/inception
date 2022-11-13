@@ -1,0 +1,385 @@
+{% extends "admin/admin_base.html" %}
+
+{% block content %}
+<div class="app-main__inner">
+    <div class="app-page-title">
+        <div class="page-title-wrapper">
+            <div class="page-title-heading">
+                <div class="page-title-icon">
+                    <i class="pe-7s-flag text-success">
+                    </i>
+                </div>
+                <div>Create Sub Area
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul class="body-tabs body-tabs-layout tabs-animated body-tabs-animated nav">
+        <li class="nav-item">
+            <a role="tab" class="nav-link show active" id="tab-0" data-toggle="tab" href="#tab-content-0"
+                aria-selected="true">
+                <span>General Information</span>
+            </a>
+        </li>
+    </ul>
+    <form action="{{ url_for('bp_bds.create_sub_area') }}" id="create_form" class="needs-validation" method="POST"
+        novalidate>
+        <div class="tab-content">
+            <div class="tab-pane tabs-animation fade active show" id="tab-content-0" role="tabpanel">
+                <div class="main-card mb-3 card">
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <div class="position-relative form-group">
+                                    <label for="name" class="">Name</label>
+                                    <input name="name" id="name" type="text" class="form-control input_required"
+                                        required>
+                                    <div class="valid-feedback">
+                                        Looks good!
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please provide a valid name
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="position-relative form-group">
+                                    <label for="description" class="">Description</label>
+                                    <input name="description" id="description" type="text" class="form-control">
+                                    <div class="valid-feedback">
+                                        Looks good!
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please provide a valid description
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="position-relative form-group">
+                                    <label for="area_id" class="">Area</label>
+                                    <select name="area_id" id="area_id" class="form-control">
+                                        <option value="">Choose...</option>
+                                        {% for area in data['areas'] %}
+                                        <option value="{{ area.id }}">
+                                            {{area.name}}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="valid-feedback">
+                                        Looks good!
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        Please provide a valid
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-14">
+                    <div class="main-card mb-3 card">
+                        <div class="card-body">
+                            <h5 class="card-title">Subscribers</h5>
+                            <div class="table-responsive">
+                                <table id="tbl_inline_subscribers" class="mb-0 table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style="display:none;"></th>
+                                            <th></th>
+                                            <th>FIRST NAME</th>
+                                            <th>LAST NAME</th>
+                                            <th>ADDRESS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="d-block text-center card-footer">
+                                <button id="btn_delete_subscriber" type="button"
+                                    class="mr-2 btn-icon btn-icon-only btn btn-outline-danger"><i
+                                        class="pe-7s-trash btn-icon-wrapper"> </i></button>
+                                <button type="button" class="btn-wide btn btn-success" data-toggle="modal"
+                                    data-target="#add_subscriber_modal" data-placement="bottom">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Example starter JavaScript for disabling form submissions if there are invalid fields
+            (function () {
+                'use strict';
+                window.addEventListener('load', function () {
+                    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                    var forms = document.getElementsByClassName('needs-validation');
+                    // Loop over them and prevent submission
+                    var validation = Array.prototype.filter.call(forms, function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (form.checkValidity() === false) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+                }, false);
+            })();
+        </script>
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    </form>
+</div>
+
+{% endblock %}
+
+
+{% block inner_footer %}
+<div class="app-footer-left">
+    <button form="create_form" type="submit" class="btn btn-primary" style="margin-right: 10px;">Save</button>
+    <button type="button" class="btn btn-secondary" onclick="history.back(-1)">Cancel</button>
+</div>
+{% endblock %}
+
+
+{% block extra_head %}
+<style>
+    .myHiddenColumn {
+        display: none;
+    }
+</style>
+
+<script type="text/javascript">
+    OID = "{{OID}}";
+</script>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    //
+// Updates "Select all" control in a data table
+//
+
+var dtbl_inline_subscribers;
+
+function updateDataTableSelectAllCtrl(table) {
+    var $table = table.table().node();
+    var $chkbox_all = $('tbody input[type="checkbox"]', $table);
+    var $chkbox_checked = $('tbody input[type="checkbox"]:checked', $table);
+    var chkbox_select_all = $('thead input[type="checkbox"]', $table).get(0);
+
+    // If none of the checkboxes are checked
+    if ($chkbox_checked.length === 0) {
+        chkbox_select_all.checked = false;
+        if ('indeterminate' in chkbox_select_all) {
+            chkbox_select_all.indeterminate = false;
+        }
+
+        // If all of the checkboxes are checked
+    } else if ($chkbox_checked.length === $chkbox_all.length) {
+        chkbox_select_all.checked = true;
+        if ('indeterminate' in chkbox_select_all) {
+            chkbox_select_all.indeterminate = false;
+        }
+
+        // If some of the checkboxes are checked
+    } else {
+        chkbox_select_all.checked = true;
+        if ('indeterminate' in chkbox_select_all) {
+            chkbox_select_all.indeterminate = true;
+        }
+    }
+}
+
+
+$(document).ready(function () {
+
+    var rows_selected = [];
+
+    dtbl_inline_subscribers = $("#tbl_inline_subscribers").DataTable({
+        "pageLength": 50,
+        "select": {
+            'style': 'multi'
+        },
+        "order": [[1, 'asc']],
+        "createdRow": function(row, data, dataIndex) {
+            dtbl_inline_subscribers.row(row).column(0).nodes().to$().addClass("myHiddenColumn");
+        }
+    });
+
+    $("#btn_delete_subscriber").click(function () {
+        $("#tbl_subscribers_line tr").each(function () {
+            var check = $(this).find("input.chkbox").is(':checked');
+            if (check) {
+
+                var row = dtbl_mdl_subscribers.row.add([
+                    $(this).find("input").eq(0).val(),
+                    "<input class='chkbox' type='checkbox'>",
+                    $(this).find("td").eq(2).html(),
+                    $(this).find("td").eq(3).html(),
+                    $(this).find("td").eq(4).html(),
+                ]);
+                dtbl_mdl_subscribers.row(row).column(0).nodes().to$().addClass('myHiddenColumn');
+                dtbl_mdl_subscribers.row(row).draw();
+                //$(this).remove();
+                dtbl_inline_subscribers.row($(this)).remove().draw();
+            }
+        });
+    });
+
+
+    // MODAL SCRIPT ->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    var subscribers_selected = []
+
+    var dtbl_mdl_subscribers = $('#tbl_mdl_subscribers').DataTable({
+        ajax: {
+            url: "/bds/api/dtbl/subscribers",
+            data: function (d) {
+                d.sub_area_id = OID
+            }
+        },
+        pageLength: 10,
+        ordering: false,
+        columnDefs: [
+            {
+                'targets': 0,
+                'searchable': false,
+                'orderable': false,
+                'width': '1%',
+                'className': 'dt-body-center',
+                'checkboxes': {
+                    'selectRow': true
+                }
+            }
+        ],
+        select: {
+            'style': 'multi'
+        },
+        order: [[1, 'asc']],
+        'rowCallback': function (row, data, dataIndex) {
+            // Get row ID
+            var rowId = data[0];
+
+            // If row ID is in the list of selected row IDs
+            if ($.inArray(rowId, subscribers_selected) !== -1) {
+                $(row).find('input[type="checkbox"]').prop('checked', true);
+                $(row).addClass('selected');
+            }
+        }
+    });
+
+    // Handle click on checkbox
+    $('#tbl_mdl_subscribers tbody').on('click', 'input[type="checkbox"]', function (e) {
+        var $row = $(this).closest('tr');
+
+        // Get row data
+        var data = dtbl_mdl_subscribers.row($row).data();
+
+        // Get row ID
+        var rowId = data[0];
+        console.log(rowId);
+
+        // Determine whether row ID is in the list of selected row IDs
+        var index = $.inArray(rowId, subscribers_selected);
+
+        // If checkbox is checked and row ID is not in list of selected row IDs
+        if (this.checked && index === -1) {
+            subscribers_selected.push(rowId);
+
+            // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+        } else if (!this.checked && index !== -1) {
+            subscribers_selected.splice(index, 1);
+        }
+
+        if (this.checked) {
+            $row.addClass('selected');
+        } else {
+            $row.removeClass('selected');
+        }
+
+        // Update state of "Select all" control
+        updateDataTableSelectAllCtrl(dtbl_mdl_subscribers);
+
+        // Prevent click event from propagating to parent
+        e.stopPropagation();
+    });
+
+
+    // Handle click on table cells with checkboxes
+    $('#tbl_mdl_subscribers').on('click', 'tbody td, thead th:first-child', function (e) {
+        $(this).parent().find('input[type="checkbox"]').trigger('click');
+    });
+
+
+    // Handle click on "Select all" control
+    $('thead input[type="checkbox"]', dtbl_mdl_subscribers.table().container()).on('click', function (e) {
+        if (this.checked) {
+            $('#tbl_mdl_subscribers tbody input[type="checkbox"]:not(:checked)').trigger('click');
+        } else {
+            $('#tbl_mdl_subscribers tbody input[type="checkbox"]:checked').trigger('click');
+        }
+
+        // Prevent click event from propagating to parent
+        e.stopPropagation();
+    });
+
+
+    // Handle table draw event
+    dtbl_mdl_subscribers.on('draw', function () {
+        // Update state of "Select all" control
+        updateDataTableSelectAllCtrl(dtbl_mdl_subscribers);
+    });
+
+
+    $("#btn_add_subscriber").click(function () {
+        console.log(subscribers_selected);
+
+        dtbl_mdl_subscribers.rows('.selected').data().each(function(value, index){
+
+            var id = value[0];
+            var contract_no = value[1];
+            var fname = value[2];
+            var lname = value[3];
+            var address = value[4];
+            console.log(id);
+
+            var new_row = dtbl_inline_subscribers.row.add([
+                `<input name="subscribers[]" type="hidden" value="${id}">`,
+                `<input class="chkbox" type="checkbox">`,
+                contract_no,
+                fname,
+                lname,
+                address
+            ]);
+            dtbl_inline_subscribers.row(new_row).draw();
+        });
+
+        dtbl_mdl_subscribers.rows('.selected').remove().draw();
+
+        //     var selected_row = $(this).closest('tr');
+
+        //     var id = dtbl_mdl_subscribers.row(selected_row).data()[0];
+        //     var contract_no = dtbl_mdl_subscribers.row(selected_row).data()[1];
+        //     var fname = dtbl_mdl_subscribers.row(selected_row).data()[2];
+        //     var lname = dtbl_mdl_subscribers.row(selected_row).data()[3];
+        //     var address = dtbl_mdl_subscribers.row(selected_row).data()[4];
+
+        //     var row = dtbl_inline_subscribers.row.add([
+        //         id,
+        //         contract_no,
+        //         fname,
+        //         lname,
+        //         address
+        //     ]);
+
+        //     dtbl_inline_subscribers.row(row).draw();
+        //     dtbl_mdl_subscribers.row(selected_row).remove().draw();
+        // });
+
+    });
+});
+</script>
+{% endblock %}

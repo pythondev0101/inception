@@ -1,6 +1,106 @@
 <!--THIS FILE EXTENDS admin_base.html-->
 <!--THIS IS THE DASHBOARD TEMPLATE-->
 {% extends "admin/admin_base.html" %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.1/chart.min.js" integrity="sha512-O2fWHvFel3xjQSi9FyzKXWLTvnom+lOYR/AUEThL/fbP4hv1Lo5LCFCGuTXBRyKC4K4DJldg5kxptkgXAzUpvA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    const DATA_COUNT = 7;
+    const NUMBER_CFG = { count: DATA_COUNT, min: -100, max: 100 };
+    const data = {
+        labels: [],
+        datasets: []
+    };
+    const config = {
+        type: 'bar',
+        data: data,
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: ''
+                },
+            },
+            responsive: true,
+            scales: {
+                x: {
+                    stacked: true,
+                },
+                y: {
+                    stacked: true
+                }
+            }
+        }
+    };
+
+    $(document).ready(function () {
+        const ctx = document.getElementById('chrt_delivery_summary');
+        const myChart = new Chart(ctx, config);
+
+        loadDeliverySummary();
+        loadCurrentCycleTotals();
+
+        $(".btn-municipality").on('click', function () {
+            $('.btn-actions-pane-right').find('.btn-municipality').removeClass("active");
+            $(this).addClass('active');
+            
+            var id = $(this).val();
+
+            $.getJSON(
+                `/admin/dashboard/get-delivery-summary?municipality_id=${id}`, function(response){
+                myChart.options.plugins.title.text = "Sub Areas";
+                updateData(myChart, response.data.labels, response.data.datasets);
+            }).fail(function() {
+                Swal.fire({title: "Error Occured!", text: "Please refresh the page then try again!", icon: "error"});
+            });
+        });
+
+
+        function loadDeliverySummary() {
+            var firstMunicipality = "{{municipalities[0].id}}";
+    
+            $.getJSON(
+                `/admin/dashboard/get-delivery-summary?municipality_id=${firstMunicipality}`, function(response){
+                myChart.options.plugins.title.text = "Sub Areas";
+                updateData(myChart, response.data.labels, response.data.datasets);
+            }).fail(function() {
+                Swal.fire({title: "Error Occured!", text: "Please refresh the page then try again!", icon: "error"});
+            });
+        }
+
+
+        function loadCurrentCycleTotals() {
+            $.getJSON(
+                `/admin/dashboard/get-current-cycle-totals`, function(response){
+                    $("#total_pending").html(response.data.total_pending);
+                    $("#total_delivered").html(response.data.total_delivered);
+                    $("#total_in_progress").html(response.data.total_in_progress);
+            }).fail(function() {
+                Swal.fire({title: "Error Occured!", text: "Please refresh the page then try again!", icon: "error"});
+            });
+        }
+    
+    
+    
+        function updateData(chart, labels, datasets) {
+            removeData(chart);
+            chart.config.data.labels = labels;
+            chart.config.data.datasets = datasets;
+            chart.update();
+        }
+    
+        function removeData(chart) {
+            chart.data.labels.pop();
+            chart.data.datasets.forEach((dataset) => {
+                dataset.data.pop();
+            });
+            chart.update();
+        }
+    }); // document
+</script>
+{% endblock scripts %}
+
+
 {% block content %}
 <div class="app-main__inner">
     <div class="app-page-title">
@@ -12,12 +112,70 @@
                 </div>
                 <div>Dashboard
                     <div class="page-title-subheading">
+                        Summaries
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="row">
+        <div class="col-md-4 col-xl-4">
+            <div class="card mb-3 widget-content bg-love-kiss">
+                <div class="widget-content-wrapper text-white">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">In-Progress</div>
+                        <div class="widget-subheading">Current Cycle Total</div>
+                    </div>
+                    <div class="widget-content-right">
+                        <div class="widget-numbers text-white"><span id="total_in_progress">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-xl-4">
+            <div class="card mb-3 widget-content bg-sunny-morning">
+                <div class="widget-content-wrapper text-white">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">Pending</div>
+                        <div class="widget-subheading">Current Cycle Total</div>
+                    </div>
+                    <div class="widget-content-right">
+                        <div class="widget-numbers text-white"><span id="total_pending">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-xl-4">
+            <div class="card mb-3 widget-content bg-happy-green">
+                <div class="widget-content-wrapper text-white">
+                    <div class="widget-content-left">
+                        <div class="widget-heading">Delivered</div>
+                        <div class="widget-subheading">Current Cycle Total</div>
+                    </div>
+                    <div class="widget-content-right">
+                        <div class="widget-numbers text-white"><span id="total_delivered">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-card mb-3 card">
+                <div class="card-header">Delivery Summary - Current Cycle
+                    <div class="btn-actions-pane-right">
+                        {% for municipality in municipalities%}
+                        <button value="{{municipality.id}}"
+                            class="{% if loop.first %} active {% endif %}btn btn-outline-primary btn-municipality">{{municipality.name}}</button>
+                        {% endfor%}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="chrt_delivery_summary" height="350" class="chartjs-render-monitor"
+                        style="display: block; width: 341px; height: 170px;" width="895"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

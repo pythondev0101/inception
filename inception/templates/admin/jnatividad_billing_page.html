@@ -1,0 +1,155 @@
+{% extends "admin/admin_base.html" %}
+
+{% block scripts %}
+<script>
+    var SELECTEDBILLINGID;
+
+    $(document).ready(function () {
+        var dt_billings = $('#tbl_billings').DataTable({
+            "dom": 'rtip',
+            "pageLength": 25,
+            "processing": true,
+            "serverSide": true,
+            "ordering": false,
+            "responsive": true,
+            "autoWidth": false,
+            "ajax": {
+                "url": "/admin/billings/dt",
+            },
+            "columnDefs": [{
+                "targets": 0,
+                "visible": false,
+            }, {
+                "targets": 6,
+                "width": "10%",
+                "className": "text-center",
+                "render": function (data, type, row) {
+                    var btnToggleText;
+                    console.log(data);
+                    if(data == 6 || row[5] == true){
+                        btnToggleText = "Set Inactive";
+                    } else {
+                        btnToggleText = "Set Active";
+                    }
+
+                    return `
+                    <div role="group" class="btn-group-sm btn-group">
+                        <button class="btn-shadow btn btn-primary btn-set">${btnToggleText}</button>
+                        <button disabled class="btn-shadow btn btn-primary">Edit</button>
+                    </div>
+                    `
+                },
+            },
+            {
+                "targets": 5,
+                "className": "text-center",
+                "width": "10%",
+                "render": function (data, type, row) {
+                    if (data == 5 || data == true) {
+                        return `<div class="badge badge-success">Active</div>`;
+                    }
+                    return `<div class="badge badge-danger">Inactive</div>`;
+                },
+            }
+            ],
+        });
+
+        $("#tbl_billings tbody").on('click', '.btn-set', function () {
+            // Get row data
+            var current_row = $(this).parents('tr');//Get the current row
+            if (current_row.hasClass('child')) {//Check if the current row is a child row
+                current_row = current_row.prev();//If it is, then point to the row before it (its 'parent')
+            }
+            const data = dt_billings.row(current_row).data();//At this point, current_row refers to a valid row in the table, whether is a child row (collapsed by the DataTable's responsiveness) or a 'normal' row
+            console.log('Row data:'+data);
+
+            const dataStatus = data[5];
+            const status = (dataStatus == 5 || dataStatus == true) ? "Inactive" : "Active";
+
+            SELECTEDBILLINGID = data[0];
+
+            Swal.fire({
+                title: `Are you sure to set this ${status}?`,
+                text: "This will affect incoming deliveries!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Confirm!",
+                showLoaderOnConfirm: true,
+                preConfirm: function () {
+                    const url = "/admin/billings/" + SELECTEDBILLINGID + "/set-active";
+
+                    return setTimeout(function () {
+                        $.ajax({ 
+                            url: url,
+                            type: "POST",
+                            dataType: "json",
+                            async: false,
+                            data: JSON.stringify({
+                                'status': !dataStatus,
+                            }),
+                            contentType: "application/json; charset=utf-8",
+                            success: function (data) {
+                                if (data.result) {
+                                    dt_billings.ajax.reload();
+                                    Swal.fire({
+                                        'title': "Success!",
+                                        "text": `This billing set to ${status}`,
+                                        'icon': 'success'
+                                    });
+                                }
+                            }
+                        });
+                    }, 500);
+                }
+            });
+        });
+    }); // document
+</script>
+{% endblock scripts %}
+
+
+{% block content %}
+<div class="app-main__inner">
+    <div class="app-page-title">
+        <div class="page-title-wrapper">
+            <div class="page-title-heading">
+                <div class="page-title-icon">
+                    <i class="pe-7s-rocket icon-gradient bg-happy-itmeo"></i>
+                </div>
+                <div>
+                    Billings
+                    <div class="page-title-subheading">
+                        List of billings
+                    </div>
+                </div>
+            </div>
+            <!-- Actions -->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-card mb-3 card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="tbl_billings" class="align-middle mb-0 table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center"></th>
+                                    <th class="text-center">BILLING NO.</th>
+                                    <th class="text-center">DESCRIPTION</th>
+                                    <th class="text-center">DATE FROM</th>
+                                    <th class="text-center">DATE TO</th>
+                                    <th class="text-center">STATUS</th>
+                                    <th class="text-center">ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

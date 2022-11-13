@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<form action="{{url_for('bp_bds.s3_upload')}}" method="post" enctype="multipart/form-data">
+  Select image to upload:
+  <input type="file" name="file">
+  <input type="submit" value="Upload Image" name="submit">
+</form>
+
+<img src="https://likes-bucket.s3.ap-southeast-1.amazonaws.com/232506010_200437105434885_5732457378327064075_n.jpg" alt="Girl in a jacket" width="500" height="600">
+</body>
+</html>

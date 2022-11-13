@@ -1,0 +1,141 @@
+<!--THIS FILE EXTENDS admin_base.html-->
+<!--THIS IS THE DASHBOARD TEMPLATE-->
+{% extends "admin/admin_base.html" %}
+
+{% block scripts %}
+<script>
+    var deliverySummaryPerSubAreaReportPDF = "{{url_for('admin.delivery_summary_per_sub_area_report')}}";
+
+    $(document).ready(function () {
+        $("#select_municipality").change(function () {
+            var municipalityID = $(this).val();
+
+            $.getJSON(
+                `/admin/municipalities/${municipalityID}/areas`, function (response) {
+                    $("#select_area").empty().append($('<option></option>').attr("value", "").text("Choose..."));
+                    $("#select_sub_area").empty().append($('<option></option>').attr("value", "").text("Choose..."));
+
+                    for (var i = 0; i < response.data.length; i++) {
+                        $("#select_area").append($("<option></option>").attr("value", response.data[i]._id).text(response.data[i].name));
+                    }
+                }).fail(function () {
+                    Swal.fire({ title: "Error Occured!", text: "Please refresh the page then try again!", icon: 'error' });
+                });
+        });
+
+        $("#select_area").change(function () {
+            var areaID = $(this).val();
+
+            $.getJSON(
+                `/admin/areas/${areaID}/sub-areas`, function (response) {
+                    $("#select_sub_area").empty().append($('<option></option>').attr("value", "").text("Choose..."));
+
+                    for (var i = 0; i < response.data.length; i++) {
+                        $("#select_sub_area").append($("<option></option>").attr("value", response.data[i]._id).text(response.data[i].name));
+                    }
+                }).fail(function () {
+                    Swal.fire({ title: "Error Occured!", text: "Please refresh the page then try again!", icon: 'error' });
+                });
+        });
+
+
+        $("#btn_print_per_sub_area").click(function(){
+            var selectedBillingId = $("#select_billing").find(":selected").val();
+            var selectedBillingName = $("#select_billing").find(":selected").text();
+            var selectedMunicipalityId = $("#select_municipality").find(":selected").val();
+            var selectedMunicipalityName = $("#select_municipality").find(":selected").text();
+            var selectedAreaId = $("#select_area").find(":selected").val();
+            var selectedAreaName = $("#select_area").find(":selected").text();
+            var selectedSubreaId = $("#select_sub_area").find(":selected").val();
+            var selectedSubAreaName = $("#select_sub_area").find(":selected").text();
+            
+            if(selectedBillingId == "" || selectedMunicipalityId == "" 
+                || selectedAreaId == "" || selectedSubreaId == ""){
+                Swal.fire({
+                    title: "Please choose all required fields!",
+                    text: "Reminder",
+                    icon: "info",
+                    closeOnConfirm: true,
+                });
+                return;
+            }
+
+            window.open(deliverySummaryPerSubAreaReportPDF);
+        });
+    }); // document
+</script>
+{% endblock scripts %}
+
+
+{% block content %}
+<div class="app-main__inner">
+    <div class="app-page-title">
+        <div class="page-title-wrapper">
+            <div class="page-title-heading">
+                <div class="page-title-icon">
+                    <i class="pe-7s-graph2 icon-gradient bg-mean-fruit">
+                    </i>
+                </div>
+                <div>Reports
+                    <div class="page-title-subheading">
+                        PDFs
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="main-card mb-3 card">
+                <div class="card-header">Delivery Summary Per Sub-Area
+                </div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="col-md-3">
+                            <div class="position-relative form-group">
+                                <label for="payment_mode" class="">Billing</label>
+                                <select id="select_billing" class="form-control">
+                                    <option value="">Choose...</option>
+                                    {% for billing in billings %}
+                                    <option value="{{billing.id}}" {% if billing.active %} selected {% endif %}>{{billing.full_billing_no}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="position-relative form-group">
+                                <label for="payment_status" class="">Municipality</label>
+                                <select id="select_municipality" class="form-control">
+                                    <option value="">Choose...</option>
+                                    {% for municipality in municipalities %}
+                                    <option value="{{municipality.id}}">{{municipality.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="position-relative form-group">
+                                <label for="payment_status" class="">Area</label>
+                                <select id="select_area" class="form-control">
+                                    <option value="">Choose...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="position-relative form-group">
+                                <label for="payment_status" class="">Sub-Area</label>
+                                <select id="select_sub_area" class="form-control">
+                                    <option value="">Choose...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-block text-center card-footer">
+                    <button id="btn_print_per_sub_area" class="btn-wide btn btn-primary">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

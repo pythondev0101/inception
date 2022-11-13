@@ -1,0 +1,23 @@
+{% for row in inline.data %}
+<tr>
+    <td>{{row.id}}</td>
+    <td>{{row.delivery_date}}</td>
+    <td>{{row.date_delivered}}</td>
+    <td>{{row.messenger.fname}} {{row.messenger.lname}}</td>
+    <td>
+        {% if row.status == "IN-PROGRESS" %}
+        <div class="mb-2 mr-2 badge badge-danger">{{row.status}}</div>
+        {% elif row.status == "PENDING" %}
+        <div class="mb-2 mr-2 badge badge-warning">{{row.status}}</div>
+        {% elif row.status == "DELIVERED" %}
+        <div class="mb-2 mr-2 badge badge-success">{{row.status}}</div>
+        {% endif %}
+    </td>
+    <td>
+        {% if row.status == "IN-PROGRESS" %}
+        {% else %}
+        <button type="button" class="btn btn-primary btn-sm btn_details" data-toggle="modal" data-target="#details_modal" data-placement="bottom">Details</button>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}

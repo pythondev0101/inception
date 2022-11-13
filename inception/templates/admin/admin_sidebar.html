@@ -33,13 +33,71 @@
     <div class="scrollbar-sidebar">
         <div class="app-sidebar__inner">
             <ul class="vertical-nav-menu">
-                <li class="app-sidebar__heading">Dashboard and Reports</li>
+                <li class="app-sidebar__heading">Monitoring</li>
                 <li>
-                <a href="" class="mm-active">
+                <a href="{{url_for('admin.dashboard')}}" class="inception-link">
                     <i class="metismenu-icon pe-7s-rocket icon-gradient bg-premium-dark" aria-hidden="true"></i>
                     Dashboard
                 </a>
                 </li>
+                <li class="app-sidebar__heading">Reports</li>
+                <li>
+                    <a href="{{url_for('admin.reports')}}" class="inception-link">
+                        <i class="metismenu-icon pe-7s-rocket icon-gradient bg-premium-dark" aria-hidden="true"></i>
+                        Reports
+                    </a>
+                </li>
+                <li class="app-sidebar__heading">Delivery</li>
+                <li>
+                    <a href="{{url_for('admin.billings')}}" class="inception-link">
+                        <i class="metismenu-icon pe-7s-rocket icon-gradient bg-premium-dark" aria-hidden="true"></i>
+                        Billings
+                    </a>
+                </li>
+                <li>
+                    <a href="{{url_for('admin.deliveries')}}" class="inception-link">
+                        <i class="metismenu-icon pe-7s-rocket icon-gradient bg-premium-dark" aria-hidden="true"></i>
+                        Deliveries
+                    </a>
+                </li>
+                <li>
+                    <a href="{{url_for('admin.messengers')}}" class="inception-link">
+                        <i class="metismenu-icon pe-7s-rocket icon-gradient bg-premium-dark" aria-hidden="true"></i>
+                        Messengers
+                    </a>
+                </li>
+                <li>
+                    <a href="{{url_for('admin.subscribers')}}" class="inception-link">
+                        <i class="metismenu-icon pe-7s-rocket icon-gradient bg-premium-dark" aria-hidden="true"></i>
+                        Subscribers
+                    </a>
+                </li>
+                <li class="app-sidebar__heading">Locations</li>
+                <li>
+                    <a href="{{url_for('admin.sub_areas')}}" class="inception-link">
+                        <i class="metismenu-icon pe-7s-rocket icon-gradient bg-premium-dark" aria-hidden="true"></i>
+                        Sub-Areas
+                    </a>
+                </li>
+                <li>
+                    <a href="{{url_for('admin.areas')}}" class="inception-link">
+                        <i class="metismenu-icon pe-7s-rocket icon-gradient bg-premium-dark" aria-hidden="true"></i>
+                        Areas
+                    </a>
+                </li>
+                <li>
+                    <a href="{{url_for('admin.municipalities')}}" class="inception-link municipalities">
+                        <i class="metismenu-icon pe-7s-rocket icon-gradient bg-premium-dark" aria-hidden="true"></i>
+                        Municipalities
+                    </a>
+                </li>
+                <!-- <li class="app-sidebar__heading">System</li>
+                <li>
+                    <a href="" class="inception-link">
+                        <i class="metismenu-icon pe-7s-rocket icon-gradient bg-premium-dark" aria-hidden="true"></i>
+                        Users
+                    </a>
+                </li> -->
             </ul>
         </div>
     </div>

@@ -1,3 +1,4 @@
+import boto3
 from flask import Flask
 from flask_login import LoginManager
 from flask_pymongo import PyMongo
@@ -9,6 +10,7 @@ from config import APP_CONFIG
 CSRF = CSRFProtect()
 MONGO = PyMongo()
 LOGIN_MANAGER = LoginManager()
+S3 = boto3.resource("s3")
 
 
 def create_app(config_name):
@@ -23,10 +25,11 @@ def create_app(config_name):
 
     with app.app_context():
         from inception.core import cli
-        from inception import home, admin, auth
-        from inception.core.blueprints import bp_home, bp_admin, bp_auth
+        from inception import home, admin, auth, jnatividad
+        from inception.core.blueprints import bp_home, bp_admin, bp_auth, bp_api
         
         app.register_blueprint(bp_home, url_prefix='/')
         app.register_blueprint(bp_admin, url_prefix='/admin')
         app.register_blueprint(bp_auth, url_prefix='/auth')
+        app.register_blueprint(bp_api, url_prefix='/api')
     return app

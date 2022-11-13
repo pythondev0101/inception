@@ -1,0 +1,7 @@
+{% for row in inline.data %}
+<tr>
+    <td>{{row.name}}</td>
+    <td>{{row.description}}</td>
+    <td>{{row.municipality.name}}</td>
+</tr>
+{% endfor %}

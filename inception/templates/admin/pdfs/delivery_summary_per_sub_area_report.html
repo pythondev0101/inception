@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    td,
+    th {
+      border: 1px solid black;
+      text-align: center;
+      padding: 8px;
+      font-size: 9px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+
+    @page {
+      size: letter landscape;
+      margin: 2cm;
+    }
+
+    .Row {
+      text-align: center;
+      display: table;
+      width: 100%;
+      /*Optional*/
+      table-layout: fixed;
+      /*Optional*/
+      border-spacing: 10px;
+      /*Optional*/
+    }
+
+    .Column {
+      display: table-cell;
+      font-size: 11px;
+      /*Optional*/
+    }
+  </style>
+</head>
+
+<body>
+
+  <div style="text-align: center;">
+    <h3 style="margin-bottom: 5px;">JNATIVIDAD BILLING</h3>
+    <h5 style="font-weight:bold;margin-top: 10px;">DELIVERY SUMMARY PER SUB AREA</h5>
+  </div>
+
+  <div style="text-align: center;">
+    <h6 style="font-weight:lighter;margin: 5px;">SUB AREA.: {{batch_no}}</h6>
+    <h6 style="font-weight:lighter;margin: 5px;">AREA: {{schedule}}</h6>
+    <h6 style="font-weight:lighter;margin: 5px;">MUNICIPALITY: {{schedule}}</h6>
+    <h6 style="font-weight:lighter;margin: 5px;">BILLING: {{schedule}}</h6>
+  </div>
+
+  <table>
+    <tr>
+      <th>CONTRACT NO.</th>
+      <th>NAME</th>
+      <th>ADDRESS</th>
+      <th>DELIVERED BY</th>
+      <th>DATE DELIVERED</th>
+      <th>REMARKS</th>
+      <th>STATUS</th>
+    </tr>
+
+    {% for delivery in deliveries %}
+    <tr>
+      <td>
+        {{delivery[2]}}
+      </td>
+      <td>
+        {{delivery[3]}}
+      </td>
+      <td>
+        {{delivery[17]}}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

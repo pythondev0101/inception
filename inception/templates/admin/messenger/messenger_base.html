@@ -1,0 +1,70 @@
+{% extends "admin/admin_base.html" %}
+
+{% block extra_head %}
+<style>
+    .myHiddenColumn {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+
+        var table_areas = $('#tbl_areas').DataTable({
+        });
+        var dtbl_areas = $("#tbl_messengers_line").DataTable({
+            "dom": 'rtip'
+        });
+    
+    
+        $("#btn_add_area").click(function(){
+            $("tr").each(function() {
+                var check = $(this).find("input.chkbox").is(':checked');
+                if(check){
+    
+                    var id = $(this).find("td").eq(0).html();
+                    var fname = $(this).find("td").eq(2).html();
+                    var lname = $(this).find("td").eq(3).html();
+                    var username = $(this).find("td").eq(4).html();
+    
+                    var row = dtbl_areas.row.add([
+                        `<input name="areas[]" type="hidden" value="${id}">`,
+                        `<input class="chkbox" type="checkbox">`,
+                        fname,
+                        lname,
+                        username
+                    ]);  
+    
+                    dtbl_areas.row(row).column(0).nodes().to$().addClass('myHiddenColumn');
+                    dtbl_areas.row(row).draw();
+                    table_areas.row($(this)).remove().draw();
+                }
+            });
+        });
+    
+    
+        $("#btn_delete_messenger").click(function(){
+            $("#tbl_messengers_line tr").each(function() {
+                var check = $(this).find("input.chkbox").is(':checked');
+                if (check){
+            
+                    var row = table_areas.row.add([
+                        $(this).find("input").eq(0).val(),
+                        "<input class='chkbox' type='checkbox'>",
+                        $(this).find("td").eq(2).html(),
+                        $(this).find("td").eq(3).html(),
+                        $(this).find("td").eq(4).html()
+                    ]);
+                    table_areas.row(row).column(0).nodes().to$().addClass('myHiddenColumn');
+                    table_areas.row(row).draw();
+                    dtbl_areas.row($(this)).remove().draw();
+                }
+            });
+        });
+    
+    });
+</script>
+{% endblock %}

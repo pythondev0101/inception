@@ -1,0 +1,154 @@
+{% extends 'admin/admin_dashboard.html' %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet'/>
+<style>
+    .marker {
+        background-image: url('/bds/bds/static/img/mapbox-icon.png');
+        background-size: cover;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      .marker-delivered {
+        background-image: url('/bds/bds/static/img/mapbox-icon-delivered.png');
+        background-size: cover;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      .marker-pending {
+        background-image: url('/bds/bds/static/img/mapbox-icon-pending.png');
+        background-size: cover;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      .marker-inprogress {
+        background-image: url('/bds/bds/static/img/mapbox-icon-inprogress.png');
+        background-size: cover;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+    .mapboxgl-popup {
+        max-width: 200px;
+    }
+      
+    .mapboxgl-popup-content {
+        text-align: center;
+        font-family: 'Open Sans', sans-serif;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="app-main__inner">
+    <div class="app-page-title">
+        <div class="page-title-wrapper">
+            <div class="page-title-heading">
+                <div class="page-title-icon">
+                    <i class="pe-7s-map-2 icon-gradient bg-mean-fruit">
+                    </i>
+                </div>
+                <div>Map
+                    <div class="page-title-subheading">
+                      Delivery
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="main-card mb-3 card">
+                <div class="card-body">
+                    <div class="card-title">Map</div>
+                    <div id='map' style='width: 100%; height: 800px;'></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoicHl0aG9uZGV2MDEwMSIsImEiOiJja2ZlMDhocjYwMDlyMnFvNDlmdzg1ODJ2In0.uVKowS-cSgFJZoslqxABmw';
+
+    var longitude = 121.090019;
+    var latitude = 14.232940;
+        
+    var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [longitude,latitude],
+    zoom: 10,
+    });
+
+    var geojson = {type: 'FeatureCollection',features: []};
+
+    $.ajax({
+      url: '/bds/api/deliveries?query=all',
+      dataType: 'json',
+      async: false,
+      success: function(data) {
+        var name = "";
+
+        for(i=0; i < data.deliveries.length; ++i){
+          name = data.deliveries[i].subscriber_fname + " " + data.deliveries[i].subscriber_lname 
+          geojson.features.push({
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [data.deliveries[i].longitude, data.deliveries[i].latitude],
+            },
+            properties: {
+              title: name,
+              description: data.deliveries[i].status
+            }
+          })
+        }
+      }
+    });
+
+    // add markers to map
+    geojson.features.forEach(function(marker) {
+        // create a HTML element for each feature
+        var el = document.createElement('div');
+        var statusColor = "";
+        //Check status
+        if (marker.properties.description == "DELIVERED"){
+          el.className = 'marker-delivered';
+          statusColor = "success";
+        }else if(marker.properties.description == "PENDING"){
+          el.className = 'marker-pending';
+          statusColor = "warning";
+        }else if(marker.properties.description == "IN-PROGRESS"){
+          el.className = "marker-inprogress";
+          statusColor = "danger";
+        }
+        // make a marker for each feature and add to the map
+
+        new mapboxgl.Marker(el)
+            .setLngLat(marker.geometry.coordinates)
+            .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+            .setHTML('<h3>' + marker.properties.title + `</h3><p><div class="badge badge-${statusColor}">` + marker.properties.description + '</div></p>'))
+            .addTo(map);
+    });
+
+
+</script>
+{% endblock %}
