@@ -101,7 +101,8 @@
 
             var url = document.location.href;
             if (url.includes('?')){
-                var newUrl = document.location.href + `&billing=${selectedBillingId}&municipality=${selectedMunicipalityId}&area=${selectedAreaId}&sub-area=${selectedSubreaId}`;
+                url = document.location.href.split('?')[0];
+                var newUrl = url + `?status=${_status}&billing=${selectedBillingId}&municipality=${selectedMunicipalityId}&area=${selectedAreaId}&sub-area=${selectedSubreaId}`;
             } else{
                 var newUrl = document.location.href + `?status=all&billing=${selectedBillingId}&municipality=${selectedMunicipalityId}&area=${selectedAreaId}&sub-area=${selectedSubreaId}`;
             }
@@ -405,7 +406,7 @@
                                 <select id="select_billing" class="form-control">
                                     <option value="">Choose...</option>
                                     {% for billing in billings %}
-                                    <option value="{{billing.id}}" {% if billing.active %} selected {% endif %}>
+                                    <option value="{{billing.id}}">
                                         {{billing.full_billing_no}}</option>
                                     {% endfor %}
                                 </select>
