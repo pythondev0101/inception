@@ -5,6 +5,12 @@
     var isScanMode = false;
     var barcode = "";
 
+    var _status;
+    var _billing;
+    var _municipality;
+    var _area;
+    var _subArea;
+
     $(document).ready(function () {
         var dt_deliveries = $('#tbl_deliveries').DataTable({
             "dom": 'rtip',
@@ -24,7 +30,6 @@
                 {
                     "targets": 7,
                     "render": function (data, type, row) {
-                        console.log(data);
                         if (data == "NOT YET DELIVERED") {
                             return `<div class="badge badge-info">NOT YET DELIVERED</div>`;
                         } else if (data == "IN-PROGRESS") {
@@ -60,35 +65,14 @@
             ],
         });
 
+        loadFilters();
+
         $("#select_municipality").change(function () {
-            var municipalityID = $(this).val();
-
-            $.getJSON(
-                `/admin/municipalities/${municipalityID}/areas`, function (response) {
-                    $("#select_area").empty().append($('<option></option>').attr("value", "").text("Choose..."));
-                    $("#select_sub_area").empty().append($('<option></option>').attr("value", "").text("Choose..."));
-
-                    for (var i = 0; i < response.data.length; i++) {
-                        $("#select_area").append($("<option></option>").attr("value", response.data[i]._id).text(response.data[i].name));
-                    }
-                }).fail(function () {
-                    Swal.fire({ title: "Error Occured!", text: "Please refresh the page then try again!", icon: 'error' });
-                });
+            changeMunicipality($(this));
         });
 
         $("#select_area").change(function () {
-            var areaID = $(this).val();
-
-            $.getJSON(
-                `/admin/areas/${areaID}/sub-areas`, function (response) {
-                    $("#select_sub_area").empty().append($('<option></option>').attr("value", "").text("Choose..."));
-
-                    for (var i = 0; i < response.data.length; i++) {
-                        $("#select_sub_area").append($("<option></option>").attr("value", response.data[i]._id).text(response.data[i].name));
-                    }
-                }).fail(function () {
-                    Swal.fire({ title: "Error Occured!", text: "Please refresh the page then try again!", icon: 'error' });
-                });
+            changeArea($(this));
         });
 
         $("#btn_search").click(function () {
@@ -115,9 +99,17 @@
 
             $("#card_header").text(`${selectedBillingName} - ${selectedMunicipalityName} - ${selectedAreaName} - ${selectedSubAreaName}`);
 
-            dt_deliveries.ajax.url(`/admin/billings/${selectedBillingId}/sub-areas/${selectedSubreaId}/deliveries`).load();
-        });
+            var url = document.location.href;
+            if (url.includes('?')){
+                var newUrl = document.location.href + `&billing=${selectedBillingId}&municipality=${selectedMunicipalityId}&area=${selectedAreaId}&sub-area=${selectedSubreaId}`;
+            } else{
+                var newUrl = document.location.href + `?status=all&billing=${selectedBillingId}&municipality=${selectedMunicipalityId}&area=${selectedAreaId}&sub-area=${selectedSubreaId}`;
+            }
 
+            document.location = newUrl;
+
+            dt_deliveries.ajax.url(`/admin/billings/${selectedBillingId}/sub-areas/${selectedSubreaId}/deliveries?status=${_status}`).load();
+        });
 
         $("#btn_mode").click(function () {
             var selectedBillingId = $("#select_billing").find(":selected").val();
@@ -205,7 +197,6 @@
                         data: JSON.stringify(postData),
                         contentType: "application/json; charset=utf-8",
                         success: function (response) {
-                            console.log(response);
                             if (response.status == "error") {
                                 toastr.options = {
                                     "closeButton": false,
@@ -258,15 +249,102 @@
                 }
             }
         });
+
+        function loadFilters(){
+            var url = new URL(document.location.href);
+            _status = url.searchParams.get('status');
+            _billing = url.searchParams.get('billing');
+            _municipality = url.searchParams.get('municipality');
+            _area = url.searchParams.get('area');
+            _subArea = url.searchParams.get('sub-area');
+    
+            var navElement;
+            if(_status == "delivered"){
+                navElement = $("a[data-status='delivered']");
+            } else if (_status == "pending"){
+                navElement = $("a[data-status='pending']");
+            } else if (_status == 'in-progress'){
+                navElement = $("a[data-status='in-progress']");
+            } else{
+                navElement = $("a[data-status='all']");
+            }
+            navElement.addClass('active');
+            
+            if(_billing){
+                $(`#select_billing`).val(_billing);
+            }
+            if(_municipality){
+                var e = $(`#select_municipality`);
+                e.val(_municipality);
+                changeMunicipality(e);
+            }
+            if(_area){
+                var e = $(`#select_area`); 
+                e.val(_area);
+                changeArea(e);
+            }
+            if(_subArea){
+                var e = $(`#select_sub_area`);
+                e.val(_subArea);
+    
+                dt_deliveries.ajax.url(`/admin/billings/${_billing}/sub-areas/${_subArea}/deliveries?status=${_status}`).load();
+            }
+        }
     }); // document
 
+
+    function changeMunicipality(e) {
+        var municipalityID = e.val();
+
+        $.ajaxSetup({
+            async: false
+        });
+        $.getJSON(
+            `/admin/municipalities/${municipalityID}/areas`, function (response) {
+                $("#select_area").empty().append($('<option></option>').attr("value", "").text("Choose..."));
+                $("#select_sub_area").empty().append($('<option></option>').attr("value", "").text("Choose..."));
+
+                for (var i = 0; i < response.data.length; i++) {
+                    $("#select_area").append($("<option></option>").attr("value", response.data[i]._id).text(response.data[i].name));
+                }
+            }).fail(function () {
+                Swal.fire({ title: "Error Occured!", text: "Please refresh the page then try again!", icon: 'error' });
+            });
+    }
+
+    function changeArea(e){
+        var areaID = e.val();
+        
+        $.ajaxSetup({
+            async: false
+        });
+        $.getJSON(
+            `/admin/areas/${areaID}/sub-areas`, function (response) {
+                $("#select_sub_area").empty().append($('<option></option>').attr("value", "").text("Choose..."));
+
+                for (var i = 0; i < response.data.length; i++) {
+                    $("#select_sub_area").append($("<option></option>").attr("value", response.data[i]._id).text(response.data[i].name));
+                }
+            }).fail(function () {
+                Swal.fire({ title: "Error Occured!", text: "Please refresh the page then try again!", icon: 'error' });
+            });
+    }
+
     $(".nav-link").click(function(){
-        if(document.location.href.includes('?')) {
-            var url = document.location.href+"&success=yes";
-        }else{
-            var url = document.location.href+"?success=yes";
+        var dataStatus = $(this).attr('data-status');
+
+        var url = document.location.href.split('?')[0];
+
+        if (document.location.href.includes('?')){
+            var searchParams = new URLSearchParams(document.location.search);
+            searchParams.set('status', dataStatus);
+            var newParams = searchParams.toString();
+            var newUrl = url + `?${newParams}`;
+        } else{
+            var newUrl = url + `?status=${dataStatus}`;
         }
-          document.location = url;
+
+        document.location = newUrl;
     });
 </script>
 {% endblock scripts %}
@@ -306,16 +384,16 @@
                     </div> -->
                     <ul class="nav">
                         <li class="nav-item">
-                            <a data-toggle="tab" class="nav-link active">In-Progress</a>
+                            <a data-toggle="tab" class="nav-link" data-status="in-progress">In-Progress</a>
                         </li>
                         <li class="nav-item">
-                            <a data-toggle="tab" class="nav-link">Pending</a>
+                            <a data-toggle="tab" class="nav-link" data-status="pending">Pending</a>
                         </li>
                         <li class="nav-item">
-                            <a data-toggle="tab" class="nav-link">Delivered</a>
+                            <a data-toggle="tab" class="nav-link" data-status="delivered">Delivered</a>
                         </li>
                         <li class="nav-item">
-                            <a data-toggle="tab" class="nav-link">All</a>
+                            <a data-toggle="tab" class="nav-link" data-status="all">All</a>
                         </li>
                     </ul>
                 </div>

@@ -31,7 +31,7 @@ class Subscriber(User):
 
     def __init__(self, data=None):
         super(Subscriber, self).__init__(data=data)
-        print(data)
+        
         if data is not None:
             self.mname = data.get('mname', '')
             self.contract_no = data.get('contract_no', '')

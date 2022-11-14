@@ -148,7 +148,7 @@ def deliver(subscriber_id):
 @bp_admin.route('/subscribers/<string:contract_no>/deliveries', methods=['POST'])
 @CSRF.exempt
 def deliver_subscriber_delivery(contract_no):
-    # try:
+    try:
         billing_id = request.json['billing_id']
         subscribers = Subscriber.find_all_by_contract_no(contract_no=contract_no)
 
@@ -196,12 +196,12 @@ def deliver_subscriber_delivery(contract_no):
                 ''
             ]
         return jsonify(response), 200
-    # except Exception as err:
-    #     print(err)
-    #     return jsonify({
-    #         'status': 'error',
-    #         'message': str(err)
-    #     }), 200
+    except Exception as err:
+        print(err)
+        return jsonify({
+            'status': 'error',
+            'message': str(err)
+        }), 200
 
 
 @bp_admin.route('/municipalities/<string:municipality_id>/areas', methods=['GET'])

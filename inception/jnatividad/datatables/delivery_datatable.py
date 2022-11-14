@@ -9,9 +9,19 @@ from inception.jnatividad.models import Delivery, Subscriber
 
 
 
+_status_format = {
+    'in-progress': 'IN-PROGRESS',
+    'pending': 'PENDING',
+    'delivered': 'DELIVERED',
+    'all': 'ALL'
+}
+
 @bp_admin.route('/billings/<string:billing_id>/sub-areas/<string:sub_area_id>/deliveries')
 @cross_origin()
 def get_billing_sub_area_deliveries(billing_id, sub_area_id):
+    raw_status = request.args.get('status', 'all')
+    status_filter = _status_format.get(raw_status)
+
     try:
         role_id = MONGO.db.auth_user_roles.find_one({'name': 'Subscriber'})['_id']
 
@@ -24,13 +34,17 @@ def get_billing_sub_area_deliveries(billing_id, sub_area_id):
 
         for data in query:
             subscriber: Subscriber = Subscriber(data=data)
+            search_map = {
+                'billing_id': ObjectId(billing_id),
+                'subscriber_id': ObjectId(subscriber.id),
+                'active': 1,
+            }
+            
+            if status_filter != 'ALL':
+                search_map['status'] = status_filter
             
             delivery_query = list(MONGO.db.bds_deliveries.aggregate([
-                {'$match': {
-                    'billing_id': ObjectId(billing_id),
-                    'subscriber_id': ObjectId(subscriber.id),
-                    'active': 1
-                }},
+                {'$match': search_map},
                 {'$lookup': {
                     'from': "auth_users", 
                     "localField": "subscriber_id", 
@@ -67,7 +81,10 @@ def get_billing_sub_area_deliveries(billing_id, sub_area_id):
                 status = delivery.status
             else:
                 status = "NOT YET DELIVERED"
-                
+            
+            if status == "NOT YET DELIVERED" and status_filter != 'ALL':
+                continue
+
             table_data.append([
                 str(subscriber.id),
                 subscriber.contract_no,
