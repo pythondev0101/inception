@@ -38,6 +38,9 @@ def get_municipality(municipality_id):
         }), 500
 
 
+
+
+
 @bp_admin.route('/municipalities/create', methods=['POST'])
 @login_required
 def create_municipality():

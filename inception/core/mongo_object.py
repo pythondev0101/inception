@@ -2,7 +2,6 @@ from datetime import datetime
 from bson import ObjectId
 import pymongo
 from pymongo.collection import Collection
-from flask_login import current_user
 from inception import MONGO
 from inception.core.mongo_repository import MongoRepository
 
@@ -66,16 +65,6 @@ class MongoObject(object):
         else:
             query = MongoRepository.count(filter)
         return query
-
-
-    def save(self, session=None):
-        self.created_at = datetime.utcnow()
-        self.created_by = current_user.full_name if current_user is None else 'System'
-
-        if session:
-            self._collection.insert_one(self.__dict__, session=session)
-        else:        
-            self._collection.insert_one(self.__dict__)
 
     
     def update(self, fields_to_update=None):

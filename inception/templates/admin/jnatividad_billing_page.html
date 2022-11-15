@@ -103,18 +103,6 @@
                 }
             });
         });
-
-        $("#btn_create_billing").click(function(){
-            $.getJSON(`/admin/billings/new-generated-number`, function(response){
-                if(response.status == "success"){
-                    $("#input_create_billing_no").val(response.data.new_generated_number);
-                } else if(response.status == "error"){
-                    Swal.fire({title: "Error Occured!", text: "Please refresh the page then try again!", icon: "error"});
-                }
-            }).fail(function() {
-                Swal.fire({title: "Error Occured!", text: "Please refresh the page then try again!", icon: "error"});
-            });
-        });
     }); // document
 </script>
 {% endblock scripts %}
@@ -135,12 +123,7 @@
                     </div>
                 </div>
             </div>
-            <div class="page-title-actions">
-                <button id="btn_create_billing" type="button" data-toggle="modal" data-target="#mdl_create_billing" data-placement="bottom" class="btn-shadow mr-3 btn btn-info">
-                    <i class="fa fa-plus"></i> Create New
-                </button>
- 
-            </div>
+            <!-- Actions -->
         </div>
     </div>
     <div class="row">
@@ -170,8 +153,3 @@
     </div>
 </div>
 {% endblock %}
-
-
-{% block modals %}
-    {% include "admin/create_billing_modal.html" %}
-{% endblock modals%}
