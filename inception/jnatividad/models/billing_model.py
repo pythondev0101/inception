@@ -46,3 +46,10 @@ class Billing(MongoObject):
         except AttributeError:
             raise AttributeError("Collection is not implemented".format(model_name=cls().__class__.__name__))
 
+
+    @classmethod
+    def count(cls):
+        try:
+            return cls._collection.find().count()
+        except AttributeError:
+            raise AttributeError("{model_name} Collection is not implemented".format(model_name=cls().__class__.__name__))

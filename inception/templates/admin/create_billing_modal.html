@@ -1,0 +1,51 @@
+<div id="mdl_create_billing" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Billing</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{url_for('admin.create_billing')}}" method="POST" novalidate="novalidate">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <div class="main-card mb-3 card">
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <div class="position-relative form-group"><label for="billing_no"
+                                            class="">Billing No.</label><input id="input_create_billing_no" name="billing_no" type="text" class="form-control" placeholder="BILLING NO." required="" readonly="" value=""></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="position-relative form-group"><label for="description"
+                                            class="">Cycle</label>
+                                        <input type="text" name="description" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-6">
+                                    <div class="position-relative form-group"><label for="date_from"
+                                            class="">Date From</label>
+                                        <input type="date" name="date_from" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="position-relative form-group"><label for="date_to"
+                                            class="">Date To</label>
+                                        <input type="date" name="date_to" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-info">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

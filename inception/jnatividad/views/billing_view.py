@@ -1,6 +1,6 @@
 import pymongo
 from bson.objectid import ObjectId
-from flask import request, jsonify
+from flask import request, flash, redirect, url_for, jsonify
 from flask.templating import render_template
 from flask_login import  login_required
 from inception import MONGO
@@ -30,7 +30,7 @@ def billings():
 def get_new_generated_number():
     try:
         generated_number = ""
-        query_last_billing = list(MONGO.db.bds_billings.find().sort('created_at', MONGO.DESCENDING).limit(1))
+        query_last_billing = list(MONGO.db.bds_billings.find().sort('created_at', pymongo.DESCENDING).limit(1))
 
         if query_last_billing:
             generated_number = generate_number("BILL", query_last_billing[0]['billing_no'])
@@ -86,23 +86,16 @@ def create_billing():
     try:
         new = Billing()
         new.active = False
-        new.full_billing_no = form.get('number')
+        new.full_billing_no = form.get('billing_no')
         new.description = form.get('description')
         new.date_to = form.get('date_to')
         new.date_from = form.get('date_from')
         new.billing_no = new.count() + 1
         new.save()
-        response = {
-            'status': 'success',
-            'data': new.toJson(),
-            'message': "New billing added successfully!"
-        }
-        return jsonify(response), 201
+        flash("Successfully Saved!", 'success')
     except Exception as err:
-        return jsonify({
-            'status': 'error',
-            'message': str(err)
-        }), 500
+        flash("Error Occured! Please try again", 'error')
+    return redirect(url_for('admin.billings'))
 
 
 @bp_admin.route('/billings/<string:oid>/edit',methods=['POST'])
